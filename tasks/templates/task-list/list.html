@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="row">
+
+        {% for task_list in object_list %}
+            <div class="col-lg-4">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <h3>{{ task_list.title }}</h3>
+
+                        <ul class="sortable-list connectList agile-list" id="list{{ task_list.id }}">
+                            {% for task in task_list.task_set.all %}
+                                <li class="warning-element" id="task{{ task.id }}">
+                                    {{ task.title }}
+                                    <div class="agile-detail">
+                                        <a href="#" class="float-right btn btn-xs btn-white">Tag</a>
+                                        <i class="fa fa-clock-o"></i> {{ task.conclusion_date|date:'d/m/Y'|default:'Sem data de entraga' }}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            <button class="btn btn-block btn-outline-info" id="add-task-button-{{ task_list.id }}"><i class="fa fa-plus"></i> Adicionar Tarefa</button>
+                            <div id="add-task-form-{{ task_list.id }}" style="display: none">
+                                {% include 'task/form.html' with form=task_title_form task_list=task_list.id %}
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="col-lg-4">
+            <button class="btn btn-block btn-outline-dark" id="add-task-list-button"><i class="fa fa-plus"></i> Adicionar Lista</button>
+            <div id="add-task-list-form" style="display: none">
+                {% include 'task-list/form.html' with form=task_list_form %}
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/plugins/touchpunch/jquery.ui.touch-punch.min.js' %}"></script>
+
+
+    <script>
+        $(document).ready(function(){
+
+            {% for task_list in object_list %}
+                $("#list{{ task_list.id }}").sortable({
+                    connectWith: ".connectList",
+                    update: function( event, ui ) {
+                        console.log('update list{{ task_list.id }}', );
+                    },
+                    remove: function () {
+                        console.log('remove list{{ task_list.id }}', );
+                    },
+                    sort: function () {
+                        console.log('sort list{{ task_list.id }}', );
+                    }
+                }).disableSelection();
+
+                $('#add-task-button-{{ task_list.id }}').click(function () {
+                    document.getElementById('add-task-button-{{ task_list.id }}').style.display = 'none';
+                    document.getElementById('add-task-form-{{ task_list.id }}').style.display = '';
+                });
+
+            {% endfor %}
+
+            $('#add-task-list-button').click(function () {
+                document.getElementById('add-task-list-button').style.display = 'none';
+                document.getElementById('add-task-list-form').style.display = '';
+            });
+
+
+
+        });
+    </script>
+
+{% endblock %}

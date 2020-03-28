@@ -1,0 +1,13 @@
+<div class="ibox">
+    <div class="ibox-content">
+        <form method="post" action="{% url 'task_list_create' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.title }}
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block btn-info"><i class="fa fa-plus"></i> Adiconar</button>
+            </div>
+        </form>
+    </div>
+</div>
